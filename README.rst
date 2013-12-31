@@ -17,6 +17,7 @@ TERYT (Polish: "Krajowy Rejestr Urzędowy Podziału Terytorialnego Kraju",
 English: "National Official Register of Territorial Division of the Country")
 is a register maintained by Polish Central Statistical Office (Polish: Główny
 Urząd Statystyczny; GUS). Among other things it contains:
+
   * identifiers and names of units of territorial division,
   * identifiers and names of localities,
   * identifiers and names of streets
@@ -36,7 +37,7 @@ Install django-teryt::
 
     pip install django-teryt
 
-Add it to INSTALLED_APPS in settings.py, run::
+Add ``teryt`` to ``INSTALLED_APPS`` in your ``settings.py`` and run::
 
     ./manage.py syncdb
 
@@ -44,9 +45,8 @@ or::
 
     ./manage.py migrate teryt
 
-if you use south. Then download TERYT data from GUS website
-(http://www.stat.gov.pl/broker/access/prefile/listPreFiles.jspa) and import
-it::
+if you use ``south``. Then download TERYT data from
+`GUS website <http://www.stat.gov.pl/broker/access/prefile/listPreFiles.jspa>`_, unpack it and then import it::
 
      ./manage.py teryt_parse /path/to/WMRODZ.xml /path/to/TERC.xml /path/to/SIMC.xml /path/to/ULIC.xml
 

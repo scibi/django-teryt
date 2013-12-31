@@ -4,14 +4,14 @@
 import os
 import sys
 
-import django-teryt
+import teryt
 
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
-version = django-teryt.__version__
+version = teryt.__version__
 
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
@@ -32,7 +32,7 @@ setup(
     author_email='patryk@sciborek.com',
     url='https://github.com/scibi/django-teryt',
     packages=[
-        'django-teryt',
+        'teryt',
     ],
     include_package_data=True,
     install_requires=[
