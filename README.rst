@@ -23,7 +23,7 @@ Urząd Statystyczny; GUS). Among other things it contains:
   * identifiers and names of streets
 
 This app allows to parse XML files from GUS and import them to database. It is
-meant to be use as part of larger system.
+meant to be used as a part of a larger system.
 
 Documentation
 -------------
