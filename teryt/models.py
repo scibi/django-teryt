@@ -5,11 +5,18 @@ from django.db import models
 def xstr(s):
     return '' if s is None else str(s)
 
+class CommonInfo(models.Model):
+    stan_na = models.DateField()
+    aktywny = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+        
+
 #WMRODZ
-class RodzajMiejsowosci(models.Model):
+class RodzajMiejsowosci(CommonInfo):
     id = models.CharField(max_length=2, primary_key=True)
     nazwa = models.CharField(max_length=30)
-    stan_na = models.DateField()
 
     def set_val(self, d):
         #{'RM': '01', 'STAN_NA': '2013-02-28', 'NAZWA_RM': u'wie\u015b'}
@@ -21,13 +28,12 @@ class RodzajMiejsowosci(models.Model):
         return u'{}: {}'.format(self.id, self.nazwa)
 
 # SIMC
-class Miejscowosc(models.Model):
+class Miejscowosc(CommonInfo):
     symbol = models.CharField(max_length=7, primary_key=True)
     jednostka = models.ForeignKey('JednostkaAdministracyjna')
     miejscowosc_nadrzedna = models.ForeignKey('self', null=True, blank=True)
     nazwa = models.CharField(max_length=100)
     rodzaj_miejscowosci = models.ForeignKey('RodzajMiejsowosci')
-    stan_na = models.DateField()
 
     def set_val(self, d):
         #{'GMI': '06', 'RODZ_GMI': '5', 'POW': '18', 'STAN_NA': '2013-03-06',
@@ -43,7 +49,21 @@ class Miejscowosc(models.Model):
         self.jednostka_id=d['WOJ']+xstr(d['POW'])+xstr(d['GMI'])+xstr(d['RODZ_GMI'])
 
 # TERC
-class JednostkaAdministracyjna(models.Model):
+class WojewodztwoManager(models.Manager):
+    def get_queryset(self):
+        return super(WojewodztwoManager, self).get_queryset().extra(where=["char_length(id) = 2"])
+
+class PowiatManager(models.Manager):
+    def get_queryset(self):
+        return super(PowiatManager,
+                self).get_queryset().extra(where=["char_length(id) = 4"])
+
+class GminaManager(models.Manager):
+    def get_queryset(self):
+        return super(GminaManager,
+                self).get_queryset().extra(where=["char_length(id) = 7"])
+
+class JednostkaAdministracyjna(CommonInfo):
     LEN_TYPE={
         7: 'GMI',
         4: 'POW',
@@ -53,10 +73,13 @@ class JednostkaAdministracyjna(models.Model):
     id = models.CharField(max_length=7, primary_key=True)
     nazwa = models.CharField(max_length=50)
     nazwa_dod = models.CharField(max_length=50)
-    stan_na = models.DateField()
 
     def typ(self):
         return self.LEN_TYPE[len(self.id)]
+
+    wojewodztwa = WojewodztwoManager()
+    powiaty = PowiatManager()
+    gminy = GminaManager()
 
     def set_val(self, d):
         # {'GMI': None, 'POW': None, 'STAN_NA': '2013-01-01', 'NAZDOD':
@@ -78,14 +101,13 @@ class JednostkaAdministracyjna(models.Model):
         return u'{}: {}'.format(self.id, self.nazwa)
 
 # ULIC
-class Ulica(models.Model):
+class Ulica(CommonInfo):
     id = models.CharField(max_length=12, primary_key=True)
     miejscowosc = models.ForeignKey('Miejscowosc')
     symbol_ulicy = models.CharField(max_length=10)
     cecha = models.CharField(max_length=10)
     nazwa_1 = models.CharField(max_length=100)
     nazwa_2 = models.CharField(max_length=100, null=True, blank=True)
-    stan_na = models.DateField()
 
     def set_val(self, d):
         # {'GMI': '03', 'RODZ_GMI': '2', 'NAZWA_1': 'Cicha', 'NAZWA_2': None, 'POW':
