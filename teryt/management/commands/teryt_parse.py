@@ -47,9 +47,11 @@ class Command(BaseCommand):
                 raise CommandError('Unknown filename: {}'.format(e))
 
             try:
+                c.objects.all().update(aktywny=False)
                 for vals in parse(a):
                     t=c()
                     t.set_val(vals)
+                    t.aktywny=True
                     t.save(force_insert=force_ins)
                 transaction.commit()
             except IntegrityError as e:
