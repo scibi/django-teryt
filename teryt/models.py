@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 
 
 def xstr(s):
-    return '' if s is None else str(s)
+    return '' if s is None else smart_text(s)
 
 
 class CommonInfo(models.Model):
@@ -16,6 +18,7 @@ class CommonInfo(models.Model):
 
 
 # WMRODZ
+@python_2_unicode_compatible
 class RodzajMiejsowosci(CommonInfo):
     id = models.CharField(max_length=2, primary_key=True)
     nazwa = models.CharField(max_length=30)
@@ -26,17 +29,36 @@ class RodzajMiejsowosci(CommonInfo):
         self.nazwa = d['NAZWA_RM']
         self.stan_na = d['STAN_NA']
 
-    def __unicode__(self):
-        return u'{}: {}'.format(self.id, self.nazwa)
+    def __str__(self):
+        return '{}: {}'.format(self.id, self.nazwa)
 
 
 # SIMC
+class MiastoManager(models.Manager):
+    def get_queryset(self):
+        return super(
+            MiastoManager,
+            self).get_queryset().filter(rodzaj_miejscowosci_id__exact='96')
+
+
+class WiesManager(models.Manager):
+    def get_queryset(self):
+        return super(
+            WiesManager,
+            self).get_queryset().filter(rodzaj_miejscowosci_id__exact='01')
+
+
+@python_2_unicode_compatible
 class Miejscowosc(CommonInfo):
     symbol = models.CharField(max_length=7, primary_key=True)
     jednostka = models.ForeignKey('JednostkaAdministracyjna')
     miejscowosc_nadrzedna = models.ForeignKey('self', null=True, blank=True)
     nazwa = models.CharField(max_length=100)
     rodzaj_miejscowosci = models.ForeignKey('RodzajMiejsowosci')
+
+    objects = models.Manager()
+    miasta = MiastoManager()
+    wsie = WiesManager()
 
     def set_val(self, d):
         # {'GMI': '06', 'RODZ_GMI': '5', 'POW': '18', 'STAN_NA': '2013-03-06',
@@ -52,6 +74,9 @@ class Miejscowosc(CommonInfo):
         self.jednostka_id = (
             d['WOJ']+xstr(d['POW'])+xstr(d['GMI'])+xstr(d['RODZ_GMI'])
         )
+
+    def __str__(self):
+        return '{}: {}'.format(self.symbol, self.nazwa)
 
 
 # TERC
@@ -73,6 +98,7 @@ class GminaManager(models.Manager):
                      self).get_queryset().extra(where=["char_length(id) = 7"])
 
 
+@python_2_unicode_compatible
 class JednostkaAdministracyjna(CommonInfo):
     LEN_TYPE = {
         7: 'GMI',
@@ -87,9 +113,19 @@ class JednostkaAdministracyjna(CommonInfo):
     def typ(self):
         return self.LEN_TYPE[len(self.id)]
 
+    objects = models.Manager()
     wojewodztwa = WojewodztwoManager()
     powiaty = PowiatManager()
     gminy = GminaManager()
+
+    def powiat(self):
+        return JednostkaAdministracyjna.objects.get(id__exact=self.id[:4])
+
+    def wojewodztwo(self):
+        return JednostkaAdministracyjna.objects.get(id__exact=self.id[:2])
+
+    def miejscowosci(self):
+        return Miejscowosc.objects.filter(jednostka_id__startswith=self.id)
 
     def set_val(self, d):
         # {'GMI': None, 'POW': None, 'STAN_NA': '2013-01-01', 'NAZDOD':
@@ -106,11 +142,12 @@ class JednostkaAdministracyjna(CommonInfo):
         if self.typ() == 'WOJ':
             self.nazwa = self.nazwa.lower()
 
-    def __unicode__(self):
-        return u'{}: {}'.format(self.id, self.nazwa)
+    def __str__(self):
+        return '{}: {}'.format(self.id, self.nazwa)
 
 
 # ULIC
+@python_2_unicode_compatible
 class Ulica(CommonInfo):
     id = models.CharField(max_length=12, primary_key=True)
     miejscowosc = models.ForeignKey('Miejscowosc')
@@ -131,8 +168,8 @@ class Ulica(CommonInfo):
         self.nazwa_2 = d['NAZWA_2']
         self.stan_na = d['STAN_NA']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.nazwa_2:
-            return u'{s.cecha} {nazwa_2} {s.nazwa_1} '\
+            return '{s.cecha} {nazwa_2} {s.nazwa_1} '\
                 '({s.miejscowosc.nazwa})'.format(s=self)
-        return u'{s.cecha} {s.nazwa_1} ({s.miejscowosc.nazwa})'.format(s=self)
+        return '{s.cecha} {s.nazwa_1} ({s.miejscowosc.nazwa})'.format(s=self)
