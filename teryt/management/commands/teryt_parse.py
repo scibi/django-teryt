@@ -25,10 +25,6 @@ class Command(BaseCommand):
 
     @transaction.commit_manually
     def handle(self, *args, **options):
-        if settings.DEBUG:
-            raise CommandError('Django DEBUG is enabled. '
-                               'Please disable it to run this command')
-
         force_ins = not options['update']
 
         fn_dict = {
