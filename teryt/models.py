@@ -12,7 +12,7 @@ def xstr(s):
 class CommonInfo(models.Model):
     stan_na = models.DateField()
     aktywny = models.BooleanField(default=False)
-
+    objects = models.Manager()
     class Meta:
         abstract = True
 
