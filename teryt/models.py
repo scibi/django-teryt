@@ -12,7 +12,9 @@ def xstr(s):
 class CommonInfo(models.Model):
     stan_na = models.DateField()
     aktywny = models.BooleanField(default=False)
+
     objects = models.Manager()
+
     class Meta:
         abstract = True
 
@@ -56,7 +58,6 @@ class Miejscowosc(CommonInfo):
     nazwa = models.CharField(max_length=100)
     rodzaj_miejscowosci = models.ForeignKey('RodzajMiejsowosci')
 
-    objects = models.Manager()
     miasta = MiastoManager()
     wsie = WiesManager()
 
@@ -113,7 +114,6 @@ class JednostkaAdministracyjna(CommonInfo):
     def typ(self):
         return self.LEN_TYPE[len(self.id)]
 
-    objects = models.Manager()
     wojewodztwa = WojewodztwoManager()
     powiaty = PowiatManager()
     gminy = GminaManager()
