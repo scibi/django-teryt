@@ -7,11 +7,20 @@ try:
     settings.configure(
         DEBUG=True,
         USE_TZ=True,
-        DATABASES={
-            "default": {
-                "ENGINE": "django.db.backends.sqlite3",
-            }
-        },
+#        DATABASES={
+#            "default": {
+#                "ENGINE": "django.db.backends.sqlite3",
+#            }
+#        },
+	DATABASES = {
+	    'default': {
+	        'ENGINE':'django.db.backends.postgresql_psycopg2',
+                'NAME': 'django_teryt_test',
+                'TEST_NAME': 'travis_ci_test',
+		'USER': 'postgres',
+		'PASSWORD': '',
+	    }
+	},
         ROOT_URLCONF="teryt.urls",
         INSTALLED_APPS=[
             "django.contrib.auth",
@@ -20,7 +29,7 @@ try:
             "teryt",
         ],
         SITE_ID=1,
-        NOSE_ARGS=['-s'],
+        NOSE_ARGS=[],
     )
 
     from django_nose import NoseTestSuiteRunner
@@ -30,10 +39,10 @@ except ImportError:
 
 def run_tests(*test_args):
     if not test_args:
-        test_args = ['tests']
+        test_args = ['teryt.tests']
 
     # Run tests
-    test_runner = NoseTestSuiteRunner(verbosity=1)
+    test_runner = NoseTestSuiteRunner(verbosity=2)
 
     failures = test_runner.run_tests(test_args)
 

@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+# coding: utf-8
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 
 from django.db import models, migrations
 
@@ -10,7 +11,7 @@ def update_aktywny(apps, schema_editor):
     ]
 
     for model_name in model_list:
-        print "Updating: {}".format(model_name)
+        print("Updating: {}".format(model_name))
         model_class = apps.get_model("teryt", model_name)
 
         akt_stan = model_class.objects.all().aggregate(models.Max('stan_na'))['stan_na__max']

@@ -3,13 +3,16 @@ django-teryt
 =============================
 
 .. image:: https://badge.fury.io/py/django-teryt.png
-    :target: http://badge.fury.io/py/django-teryt
+    :target: https://badge.fury.io/py/django-teryt
     
 .. image:: https://travis-ci.org/scibi/django-teryt.png?branch=master
-        :target: https://travis-ci.org/scibi/django-teryt
+    :target: https://travis-ci.org/scibi/django-teryt
 
 .. image:: https://pypip.in/d/django-teryt/badge.png
-        :target: https://crate.io/packages/django-teryt?version=latest
+    :target: https://crate.io/packages/django-teryt?version=latest
+
+.. image:: https://coveralls.io/repos/scibi/django-teryt/badge.svg?branch=master
+    :target: https://coveralls.io/r/scibi/django-teryt?branch=master
 
 
 django-teryt is a Django app that implements TERYT database.
@@ -28,7 +31,7 @@ It is meant to be used as a part of a larger system.
 Documentation
 -------------
 
-The full documentation is at http://django-teryt.rtfd.org.
+The full documentation is at https://django-teryt.readthedocs.org.
 
 Quickstart
 ----------
