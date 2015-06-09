@@ -15,8 +15,7 @@ try:
 	DATABASES = {
 	    'default': {
 	        'ENGINE':'django.db.backends.postgresql_psycopg2',
-                'NAME': 'django_teryt_test',
-                'TEST_NAME': 'travis_ci_test',
+                'NAME': 'django_teryt',
 		'USER': 'postgres',
 		'PASSWORD': '',
 	    }
