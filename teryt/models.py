@@ -22,7 +22,7 @@ class CommonInfo(models.Model):
 
 # WMRODZ
 @python_2_unicode_compatible
-class RodzajMiejsowosci(CommonInfo):
+class RodzajMiejscowosci(CommonInfo):
     id = models.CharField(max_length=2, primary_key=True)
     nazwa = models.CharField(max_length=30)
 
@@ -57,7 +57,7 @@ class Miejscowosc(CommonInfo):
     jednostka = models.ForeignKey('JednostkaAdministracyjna')
     miejscowosc_nadrzedna = models.ForeignKey('self', null=True, blank=True)
     nazwa = models.CharField(max_length=100)
-    rodzaj_miejscowosci = models.ForeignKey('RodzajMiejsowosci')
+    rodzaj_miejscowosci = models.ForeignKey('RodzajMiejscowosci')
 
     miasta = MiastoManager()
     wsie = WiesManager()

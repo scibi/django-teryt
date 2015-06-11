@@ -28,7 +28,7 @@ class Command(BaseCommand):
         force_ins = not options['update']
 
         fn_dict = {
-            'WMRODZ.xml': RodzajMiejsowosci,
+            'WMRODZ.xml': RodzajMiejscowosci,
             'TERC.xml': JednostkaAdministracyjna,
             'SIMC.xml': Miejscowosc,
             'ULIC.xml': Ulica,
