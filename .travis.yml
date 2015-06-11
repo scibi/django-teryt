@@ -30,6 +30,7 @@ after_success:
 addons:
   postgresql: "9.4"
 
-#before_script:
-#  - psql -c 'create database travis_ci_test;' -U postgres
+# Needed for Django 1.6
+before_script:
+  - psql -c 'create database django_teryt;' -U postgres
 
