@@ -2,6 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.cElementTree as et
+from django.utils.encoding import python_2_unicode_compatible, smart_text
+
+
+def xstr(s):
+    return '' if s is None else smart_text(s)
 
 
 def parse(stream):

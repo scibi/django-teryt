@@ -21,7 +21,8 @@ install:
 
 # command to run tests, e.g. python setup.py test
 script:
-  - coverage run --source=teryt runtests.py 
+  - coverage run --source teryt --omit '*south_migrations*' runtests.py 
+
 
 after_success:
   - pip install --quiet coveralls

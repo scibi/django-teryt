@@ -6,7 +6,7 @@ from __future__ import (absolute_import, division,
 
 import factory
 
-from ..models import RodzajMiejscowosci
+from ..models import RodzajMiejscowosci, JednostkaAdministracyjna
 
 
 class RodzajMiejscowosciFactory(factory.django.DjangoModelFactory):
@@ -20,3 +20,17 @@ class RodzajMiejscowosciFactory(factory.django.DjangoModelFactory):
     # RodzajMiejscowosci
     id = factory.Sequence(lambda n: "{:02d}".format(n))
     nazwa = factory.Sequence(lambda n: "Rodzaj {:02d}".format(n))
+
+
+class JednostkaAdministracyjnaFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = JednostkaAdministracyjna
+
+    # Common
+    stan_na = '2015-01-01'
+    aktywny = True
+
+    id = factory.Sequence(lambda n: "{:07d}".format(n))
+    nazwa = factory.Sequence(lambda n: "Gmina {}".format(n))
+    nazwa_dod = 'gmina miejska'
+
