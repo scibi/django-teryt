@@ -23,10 +23,12 @@ install:
 script:
   - coverage run --source teryt --omit '*south_migrations*' runtests.py 
 
-
+before_install:
+  - pip install codecov --use-mirrors
+  - pip install coveralls --use-mirrors
 after_success:
-  - pip install --quiet coveralls
   - coveralls
+  - codecov
 
 addons:
   postgresql: "9.4"
