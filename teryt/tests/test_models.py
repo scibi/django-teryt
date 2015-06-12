@@ -10,16 +10,23 @@ test_django-teryt
 
 Tests for `django-teryt` modules module.
 """
-import unittest
+from django.utils import six
+from django.test import TestCase
+from django.db import models
 
-from ..models import RodzajMiejscowosci, JednostkaAdministracyjna
+from ..models import (RodzajMiejscowosci, JednostkaAdministracyjna,
+                      Miejscowosc)
 from .factories import (RodzajMiejscowosciFactory,
-                        JednostkaAdministracyjnaFactory)
+                        JednostkaAdministracyjnaFactory,
+                        MiejscowoscFactory)
 
-import six
+
+class MixinTestObjectsManager(object):
+    def test_obects_model_manager(self):
+        self.assertIsInstance(JednostkaAdministracyjna.objects, models.Manager)
 
 
-class TestRodzajMiejscowosci(unittest.TestCase):
+class TestRodzajMiejscowosci(TestCase, MixinTestObjectsManager):
 
     def test_str(self):
         rm = RodzajMiejscowosciFactory(id='96', nazwa='miasto')
@@ -35,11 +42,23 @@ class TestRodzajMiejscowosci(unittest.TestCase):
         self.assertEqual(rm.stan_na, '2013-02-28')
 
 
-class TestJednostkaAdministracyjna(unittest.TestCase):
+class TestJednostkaAdministracyjna(TestCase, MixinTestObjectsManager):
+    def setUp(self):
+        self.gmina = JednostkaAdministracyjnaFactory(
+            id='0201011',
+            nazwa='Bolesławiec',
+            nazwa_dod='gmina miejska')
+        self.powiat = JednostkaAdministracyjnaFactory(
+            id='0201',
+            nazwa='bolesławiecki',
+            nazwa_dod='powiat')
+        self.wojewodztwo = JednostkaAdministracyjnaFactory(
+            id='02',
+            nazwa='DOLNOŚLĄSKIE',
+            nazwa_dod='wojewdztwo')
+
     def test_str(self):
-        ja = JednostkaAdministracyjnaFactory(id='0201011', nazwa='Bolesławiec',
-                nazwa_dod='gmina miejska')
-        self.assertEqual(six.text_type(ja), '0201011: Bolesławiec')
+        self.assertEqual(six.text_type(self.gmina), '0201011: Bolesławiec')
 
     def test_set_val(self):
         gmina = JednostkaAdministracyjna()
@@ -52,7 +71,7 @@ class TestJednostkaAdministracyjna(unittest.TestCase):
             'NAZWA': 'Bolesławiec',
             'WOJ': '02'
         })
-        
+
         wojewodztwo = JednostkaAdministracyjna()
         wojewodztwo.set_val({
             'GMI': None,
@@ -77,13 +96,64 @@ class TestJednostkaAdministracyjna(unittest.TestCase):
         self.assertEqual(wojewodztwo.nazwa_dod, 'województwo')
 
     def test_parents(self):
-        gmina = JednostkaAdministracyjnaFactory(id='0201012', nazwa='Bolesławiec',
-                nazwa_dod='gmina wiejska')
-        powiat = JednostkaAdministracyjnaFactory(id='0201', nazwa='bolesławiecki',
-                nazwa_dod='powiat')
-        wojewodztwo = JednostkaAdministracyjnaFactory(id='02',
-                nazwa='DOLNOŚLĄSKIE', nazwa_dod='wojewdztwo')
 
-        self.assertEqual(gmina.powiat(), powiat)
-        self.assertEqual(gmina.wojewodztwo(), wojewodztwo)
-        self.assertEqual(powiat.wojewodztwo(), wojewodztwo)
+        self.assertEqual(self.gmina.powiat(), self.powiat)
+        self.assertEqual(self.gmina.wojewodztwo(), self.wojewodztwo)
+        self.assertEqual(self.powiat.wojewodztwo(), self.wojewodztwo)
+
+    def test_has_managers(self):
+        self.assertIsInstance(JednostkaAdministracyjna.wojewodztwa,
+                              models.Manager)
+        self.assertIsInstance(JednostkaAdministracyjna.powiaty, models.Manager)
+        self.assertIsInstance(JednostkaAdministracyjna.gminy, models.Manager)
+
+
+class TestMiejscowosc(TestCase, MixinTestObjectsManager):
+    def setUp(self):
+        self.miejscowosc = MiejscowoscFactory(
+            symbol='0861110',
+            miejscowosc_nadrzedna=None,
+            nazwa='Strzygowska Kolonia',
+            rodzaj_miejscowosci__id='02',
+            rodzaj_miejscowosci__nazwa='kolonia')
+
+    def test_has_managers(self):
+        self.assertIsInstance(Miejscowosc.miasta, models.Manager)
+        self.assertIsInstance(Miejscowosc.wsie, models.Manager)
+
+    def test_str(self):
+        self.assertEqual(six.text_type(self.miejscowosc),
+                         '0861110: Strzygowska Kolonia')
+
+    def test_set_val(self):
+        m_dict = {
+            'GMI': '06',
+            'RODZ_GMI': '5',
+            'POW': '18',
+            'STAN_NA': '2013-03-06',
+            'SYM': '0861110',
+            'NAZWA': 'Strzygowska Kolonia',
+            'WOJ': '04',
+            'RM': '02',
+            'SYMPOD': '0861110',
+            'MZ': '1'
+            }
+        miejscowosc = Miejscowosc()
+        miejscowosc.set_val(m_dict)
+
+        # Common
+        self.assertEqual(miejscowosc.stan_na, '2013-03-06')
+        self.assertEqual(miejscowosc.aktywny, False)
+
+        # Miejscowosc
+        self.assertIsNone(miejscowosc.miejscowosc_nadrzedna)
+        self.assertEqual(miejscowosc.symbol, '0861110')
+        self.assertEqual(miejscowosc.jednostka_id, '0418065')
+        self.assertEqual(miejscowosc.nazwa, 'Strzygowska Kolonia')
+        # RodzajMiejscowosci instance made in setUp()
+        self.assertEqual(miejscowosc.rodzaj_miejscowosci.nazwa, 'kolonia')
+
+        m_dict['SYMPOD'] = '1234567'
+        miejscowosc2 = Miejscowosc()
+        miejscowosc2.set_val(m_dict)
+        self.assertEqual(miejscowosc2.miejscowosc_nadrzedna_id, '1234567')

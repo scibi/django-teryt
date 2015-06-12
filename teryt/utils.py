@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.cElementTree as et
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import smart_text
 
 
 def xstr(s):

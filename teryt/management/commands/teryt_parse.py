@@ -5,7 +5,7 @@ from optparse import make_option
 
 
 from teryt.models import (
-    RodzajMiejsowosci, JednostkaAdministracyjna, Miejscowosc, Ulica
+    RodzajMiejscowosci, JednostkaAdministracyjna, Miejscowosc, Ulica
 )
 from teryt.utils import parse
 
