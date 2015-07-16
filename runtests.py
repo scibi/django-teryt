@@ -6,7 +6,6 @@ from __future__ import (absolute_import, division,
 
 import sys
 import os
-from optparse import OptionParser
 
 try:
     from django.conf import settings
@@ -45,14 +44,12 @@ try:
             'django.middleware.csrf.CsrfViewMiddleware'
         ),
         SITE_ID=1,
-        TEST_RUNNER = 'django_nose.NoseTestSuiteRunner',
         NOSE_ARGS=['-s'],
     )
 
     from django_nose import NoseTestSuiteRunner
 except ImportError:
-    raise ImportError("To fix this error, run: "
-                      "pip install -r requirements-test.txt")
+    raise ImportError("To fix this error, run: pip install -r requirements-test.txt")
 
 
 def run_tests(*test_args):
@@ -69,6 +66,4 @@ def run_tests(*test_args):
 
 
 if __name__ == '__main__':
-    parser = OptionParser()
-    (options, args) = parser.parse_args()
-    run_tests(*args)
+    run_tests(*sys.argv[1:])
