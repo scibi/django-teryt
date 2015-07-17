@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, DatabaseError, IntegrityError
-from django.conf import settings
 from optparse import make_option
 
 
@@ -21,11 +20,11 @@ class Command(BaseCommand):
                     dest='update',
                     default=False,
                     help='Update exisitng data'),
-        )
+    )
 
-    @transaction.commit_manually
     def handle(self, *args, **options):
         force_ins = not options['update']
+        transaction.set_autocommit(False)
 
         fn_dict = {
             'WMRODZ.xml': RodzajMiejscowosci,
