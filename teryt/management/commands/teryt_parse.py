@@ -24,7 +24,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         force_ins = not options['update']
-        transaction.set_autocommit(False)
 
         fn_dict = {
             'WMRODZ.xml': RodzajMiejscowosci,
@@ -43,18 +42,16 @@ class Command(BaseCommand):
                 raise CommandError('Unknown filename: {}'.format(e))
 
             try:
-                c.objects.all().update(aktywny=False)
-                for vals in parse(a):
-                    t = c()
-                    t.set_val(vals)
-                    t.aktywny = True
-                    t.save(force_insert=force_ins)
-                transaction.commit()
+                with transaction.atomic():
+                    c.objects.all().update(aktywny=False)
+                    for vals in parse(a):
+                        t = c()
+                        t.set_val(vals)
+                        t.aktywny = True
+                        t.save(force_insert=force_ins)
             except IntegrityError as e:
-                transaction.rollback()
                 raise CommandError("Database integrity error: {}".format(e))
             except DatabaseError as e:
-                transaction.rollback()
                 raise CommandError("General database error: {}\n"
                                    "Make sure you run syncdb or migrate before"
                                    "importing data!".format(e))
