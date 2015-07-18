@@ -44,7 +44,18 @@ class Command(BaseCommand):
             try:
                 with transaction.atomic():
                     c.objects.all().update(aktywny=False)
-                    for vals in parse(a):
+
+                    row_list = parse(a)
+
+                    # MySQL doesn't support deferred checking of foreign key
+                    # constraints. As a workaround we sort data placing rows
+                    # with no a parent row at the begining.
+                    if c is Miejscowosc:
+                        row_list = sorted(row_list, key=lambda x: '0000000'
+                                          if x['SYM'] == x['SYMPOD']
+                                          else x['SYM'])
+
+                    for vals in row_list:
                         t = c()
                         t.set_val(vals)
                         t.aktywny = True
