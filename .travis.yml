@@ -7,18 +7,23 @@ env:
   global:
     - TEST_DB_USER="postgres"
   matrix:
-    - TOXENV=py27-django-18-unit
-    - TOXENV=py27-django-17-unit
-    - TOXENV=py27-django-16-unit
-    - TOXENV=py34-django-18-unit
-    - TOXENV=py34-django-17-unit
-    - TOXENV=py34-django-16-unit
-    - TOXENV=py27-django-18-integration
-    - TOXENV=py27-django-17-integration
-    - TOXENV=py27-django-16-integration
-    - TOXENV=py34-django-18-integration
-    - TOXENV=py34-django-17-integration
-    - TOXENV=py34-django-16-integration
+    - TOXENV=py27-django-18-unit        DBENGINE=pgsql
+    - TOXENV=py27-django-17-unit        DBENGINE=pgsql
+    - TOXENV=py27-django-16-unit        DBENGINE=pgsql
+    - TOXENV=py34-django-18-unit        DBENGINE=pgsql
+    - TOXENV=py34-django-17-unit        DBENGINE=pgsql
+    - TOXENV=py34-django-16-unit        DBENGINE=pgsql
+    - TOXENV=py27-django-18-integration DBENGINE=pgsql
+    - TOXENV=py27-django-17-integration DBENGINE=pgsql
+    - TOXENV=py27-django-16-integration DBENGINE=pgsql
+    - TOXENV=py34-django-18-integration DBENGINE=pgsql
+    - TOXENV=py34-django-17-integration DBENGINE=pgsql
+    - TOXENV=py34-django-16-integration DBENGINE=pgsql
+# Test diferent DBs
+    - TOXENV=py27-django-18-unit        DBENGINE=sqlite DATABASE_URL=sqlite://:memory:
+    - TOXENV=py27-django-18-integration DBENGINE=sqlite DATABASE_URL=sqlite://:memory:
+    - TOXENV=py27-django-18-unit        DBENGINE=mysql  DATABASE_URL="mysql://root:@localhost/django_teryt"
+    - TOXENV=py27-django-18-integration DBENGINE=mysql  DATABASE_URL="mysql://root:@localhost/django_teryt"
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
@@ -27,7 +32,9 @@ install:
 before_script:
   - coverage erase
 # Needed for Django 1.6
-  - psql -c 'create database django_teryt;' -U postgres
+  - sh -c "if [ '$DBENGINE' = 'pgsql' ]; then psql  -c 'DROP DATABASE IF EXISTS django_teryt;' -U postgres; fi"
+  - sh -c "if [ '$DBENGINE' = 'pgsql' ]; then psql  -c 'CREATE DATABASE django_teryt;' -U postgres; fi"
+  - sh -c "if [ '$DBENGINE' = 'mysql' ]; then mysql -e 'CREATE DATABASE IF NOT EXISTS django_teryt;'; fi"
 
 script: tox
 

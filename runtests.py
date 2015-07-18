@@ -7,13 +7,16 @@ from __future__ import (absolute_import, division,
 import sys
 import os
 
-try:
-    from django.conf import settings
 
+try:
     import django
     print("Django version: {}".format(django.get_version()))
 
-    db_user = os.getenv('TEST_DB_USER', 'django_teryt')
+    from django.conf import settings
+
+    import environ
+
+    env = environ.Env()
 
     settings.configure(
         DEBUG=True,
@@ -23,13 +26,11 @@ try:
         #       "ENGINE": "django.db.backends.sqlite3",
         #   }
         # },
-        DATABASES={
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                'NAME': 'django_teryt',
-                'USER': db_user,
-                'PASSWORD': '',
-            }
+        DATABASES = {
+            # Raises ImproperlyConfigured exception if DATABASE_URL not in os.environ
+            'default': env.db(
+                "DATABASE_URL",
+                default="postgres://django_teryt@/django_teryt"),
         },
         ROOT_URLCONF="teryt.urls",
         INSTALLED_APPS=[
