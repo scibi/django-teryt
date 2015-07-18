@@ -25,7 +25,7 @@ env:
 
 install:
   - pip install tox coveralls codecov
-  - sh -c "if [ '$DBENGINE' = 'mysql' ]; then pip install mysqlclient; fi"
+  - sh -c "if [ '$DBENGINE' = 'mysql' ]; then pip install mysql-python mysqlclient; fi"
 
 before_script:
   - coverage erase
