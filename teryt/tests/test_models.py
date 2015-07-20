@@ -101,11 +101,22 @@ class TestJednostkaAdministracyjna(TestCase, MixinTestObjectsManager):
         self.assertEqual(self.gmina.wojewodztwo(), self.wojewodztwo)
         self.assertEqual(self.powiat.wojewodztwo(), self.wojewodztwo)
 
-    def test_has_managers(self):
+    def test_managers_wojewodztwa(self):
         self.assertIsInstance(JednostkaAdministracyjna.wojewodztwa,
                               models.Manager)
+        self.assertEqual(JednostkaAdministracyjna.wojewodztwa.count(), 1)
+        JednostkaAdministracyjna.wojewodztwa.get(id='02')
+
+    def test_managers_powiaty(self):
         self.assertIsInstance(JednostkaAdministracyjna.powiaty, models.Manager)
+        self.assertEqual(JednostkaAdministracyjna.powiaty.count(), 1)
+        JednostkaAdministracyjna.powiaty.get(id='0201')
+
+    def test_managers_gminy(self):
         self.assertIsInstance(JednostkaAdministracyjna.gminy, models.Manager)
+        self.assertEqual(JednostkaAdministracyjna.gminy.count(), 1)
+        JednostkaAdministracyjna.gminy.get(id='0201011')
+
 
 
 class TestMiejscowosc(TestCase, MixinTestObjectsManager):
@@ -117,9 +128,29 @@ class TestMiejscowosc(TestCase, MixinTestObjectsManager):
             rodzaj_miejscowosci__id='02',
             rodzaj_miejscowosci__nazwa='kolonia')
 
-    def test_has_managers(self):
+        self.warszawa = MiejscowoscFactory(
+            symbol='0918123',
+            miejscowosc_nadrzedna=None,
+            nazwa='Warszawa',
+            rodzaj_miejscowosci__id='96',
+            rodzaj_miejscowosci__nazwa='miasto')
+
+        self.wies = MiejscowoscFactory(
+            symbol='0005546',
+            miejscowosc_nadrzedna=None,
+            nazwa='Wolica',
+            rodzaj_miejscowosci__id='01',
+            rodzaj_miejscowosci__nazwa='wieś')
+
+    def test_managers_miasta(self):
         self.assertIsInstance(Miejscowosc.miasta, models.Manager)
+        self.assertEqual(Miejscowosc.miasta.count(), 1)
+        Miejscowosc.miasta.get(symbol='0918123')
+
+    def test_managers_wsie(self):
         self.assertIsInstance(Miejscowosc.wsie, models.Manager)
+        self.assertEqual(Miejscowosc.wsie.count(), 1)
+        Miejscowosc.wsie.get(symbol='0005546')
 
     def test_str(self):
         self.assertEqual(six.text_type(self.miejscowosc),
