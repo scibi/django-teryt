@@ -15,10 +15,10 @@ from django.test import TestCase
 from django.db import models
 
 from ..models import (RodzajMiejscowosci, JednostkaAdministracyjna,
-                      Miejscowosc)
+                      Miejscowosc, Ulica)
 from .factories import (RodzajMiejscowosciFactory,
                         JednostkaAdministracyjnaFactory,
-                        MiejscowoscFactory)
+                        MiejscowoscFactory, UlicaFactory)
 
 
 class MixinTestObjectsManager(object):
@@ -44,18 +44,43 @@ class TestRodzajMiejscowosci(TestCase, MixinTestObjectsManager):
 
 class TestJednostkaAdministracyjna(TestCase, MixinTestObjectsManager):
     def setUp(self):
+        self.rm_miasto = RodzajMiejscowosciFactory(
+            id='96',
+            nazwa='miasto')
+
         self.gmina = JednostkaAdministracyjnaFactory(
             id='0201011',
             nazwa='Bolesławiec',
             nazwa_dod='gmina miejska')
+
+        self.gmina_nowogrodziec = JednostkaAdministracyjnaFactory(
+            id='0201044',
+            nazwa='Nowogrodziec',
+            nazwa_dod='miasto')
+
         self.powiat = JednostkaAdministracyjnaFactory(
             id='0201',
             nazwa='bolesławiecki',
             nazwa_dod='powiat')
+
         self.wojewodztwo = JednostkaAdministracyjnaFactory(
             id='02',
             nazwa='DOLNOŚLĄSKIE',
             nazwa_dod='wojewdztwo')
+
+        self.boleslawiec = MiejscowoscFactory(
+            symbol='0935989',
+            jednostka=self.gmina,
+            miejscowosc_nadrzedna=None,
+            nazwa='Bolesławiec',
+            rodzaj_miejscowosci=self.rm_miasto)
+
+        self.nowogrodziec = MiejscowoscFactory(
+            symbol='0936262',
+            jednostka=self.gmina_nowogrodziec,
+            miejscowosc_nadrzedna=None,
+            nazwa='Nowogrodziec',
+            rodzaj_miejscowosci=self.rm_miasto)
 
     def test_str(self):
         self.assertEqual(six.text_type(self.gmina), '0201011: Bolesławiec')
@@ -114,9 +139,14 @@ class TestJednostkaAdministracyjna(TestCase, MixinTestObjectsManager):
 
     def test_managers_gminy(self):
         self.assertIsInstance(JednostkaAdministracyjna.gminy, models.Manager)
-        self.assertEqual(JednostkaAdministracyjna.gminy.count(), 1)
+        self.assertEqual(JednostkaAdministracyjna.gminy.count(), 2)
         JednostkaAdministracyjna.gminy.get(id='0201011')
 
+    def test_miejscowosci(self):
+        self.assertEqual(self.gmina.miejscowosci().count(), 1)
+        self.assertEqual(self.powiat.miejscowosci().count(), 2)
+        self.assertEqual(self.wojewodztwo.miejscowosci().count(), 2)
+        self.gmina.miejscowosci().get(symbol='0935989')
 
 
 class TestMiejscowosc(TestCase, MixinTestObjectsManager):
@@ -168,7 +198,7 @@ class TestMiejscowosc(TestCase, MixinTestObjectsManager):
             'RM': '02',
             'SYMPOD': '0861110',
             'MZ': '1'
-            }
+        }
         miejscowosc = Miejscowosc()
         miejscowosc.set_val(m_dict)
 
@@ -188,3 +218,53 @@ class TestMiejscowosc(TestCase, MixinTestObjectsManager):
         miejscowosc2 = Miejscowosc()
         miejscowosc2.set_val(m_dict)
         self.assertEqual(miejscowosc2.miejscowosc_nadrzedna_id, '1234567')
+
+
+class TestUlica(TestCase, MixinTestObjectsManager):
+    def setUp(self):
+        self.ulica1 = UlicaFactory(
+            miejscowosc__miejscowosc_nadrzedna=None
+        )
+
+        self.ulica2 = UlicaFactory(
+            cecha='pl.',
+            nazwa_1='Hoffa',
+            nazwa_2='Bogumiła',
+            miejscowosc__miejscowosc_nadrzedna=None
+        )
+
+    def test_str(self):
+        self.assertEqual(six.text_type(self.ulica1), 'ul. {} ({})'.format(
+            self.ulica1.nazwa_1, self.ulica1.miejscowosc.nazwa))
+
+        self.assertEqual(six.text_type(self.ulica2),
+                         'pl. Bogumiła Hoffa ({})'.format(
+                         self.ulica2.miejscowosc.nazwa))
+
+    def test_set_val(self):
+        m_dict = {
+            'GMI': '03',
+            'RODZ_GMI': '2',
+            'NAZWA_1': 'Cicha',
+            'NAZWA_2': None,
+            'POW': '03',
+            'STAN_NA': '2013-12-16',
+            'SYM': '0185962',
+            'CECHA': 'ul.',
+            'WOJ': '08',
+            'SYM_UL': '02974'
+        }
+        ulica = Ulica()
+        ulica.set_val(m_dict)
+
+        # Common
+        self.assertEqual(ulica.stan_na, '2013-12-16')
+        self.assertEqual(ulica.aktywny, False)
+
+        # Ulica
+        self.assertEqual(ulica.id, '018596202974')
+        self.assertEqual(ulica.miejscowosc_id, '0185962')
+        self.assertEqual(ulica.symbol_ulicy, '02974')
+        self.assertEqual(ulica.cecha, 'ul.')
+        self.assertEqual(ulica.nazwa_1, 'Cicha')
+        self.assertIsNone(ulica.nazwa_2)

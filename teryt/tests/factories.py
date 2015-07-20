@@ -5,8 +5,12 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 import factory
+import faker
 
-from ..models import RodzajMiejscowosci, JednostkaAdministracyjna, Miejscowosc
+from ..models import (RodzajMiejscowosci, JednostkaAdministracyjna,
+                      Miejscowosc, Ulica)
+
+faker = faker.Factory.create('pl_PL')
 
 
 class RodzajMiejscowosciFactory(factory.django.DjangoModelFactory):
@@ -49,5 +53,23 @@ class MiejscowoscFactory(factory.django.DjangoModelFactory):
     jednostka = factory.SubFactory(JednostkaAdministracyjnaFactory)
     miejscowosc_nadrzedna = factory.SubFactory(
         'teryt.tests.factories.MiejscowoscFactory')
-    nazwa = factory.Sequence(lambda n: "Miejscowość {}".format(n))
+    nazwa = factory.LazyAttribute(lambda n: faker.city())
     rodzaj_miejscowosci = factory.SubFactory(RodzajMiejscowosciFactory)
+
+
+class UlicaFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Ulica
+
+    # Common
+    stan_na = '2015-01-01'
+    aktywny = True
+
+    # Ulica
+    id = factory.Sequence(lambda n: "{:012}".format(n))
+    miejscowosc = factory.SubFactory(
+        'teryt.tests.factories.MiejscowoscFactory')
+    symbol_ulicy = factory.Sequence(lambda n: "{:05}".format(n))
+    cecha = 'ul.'
+    nazwa_1 = factory.LazyAttribute(lambda n: faker.street_name())
+    nazwa_2 = None

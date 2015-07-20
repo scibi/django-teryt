@@ -72,7 +72,7 @@ class Miejscowosc(CommonInfo):
         if d['SYMPOD'] != d['SYM']:
             self.miejscowosc_nadrzedna_id = d['SYMPOD']
         self.jednostka_id = (
-            d['WOJ']+xstr(d['POW'])+xstr(d['GMI'])+xstr(d['RODZ_GMI'])
+            d['WOJ'] + xstr(d['POW']) + xstr(d['GMI']) + xstr(d['RODZ_GMI'])
         )
 
     def __str__(self):
@@ -124,7 +124,7 @@ class JednostkaAdministracyjna(CommonInfo):
         return JednostkaAdministracyjna.objects.get(id__exact=self.id[:2])
 
     def miejscowosci(self):
-        return Miejscowosc.objects.filter(jednostka_id__startswith=self.id)
+        return Miejscowosc.objects.filter(jednostka__id__startswith=self.id)
 
     def set_val(self, d):
         # {'GMI': None, 'POW': None, 'STAN_NA': '2013-01-01', 'NAZDOD':
@@ -137,7 +137,7 @@ class JednostkaAdministracyjna(CommonInfo):
         self.nazwa_dod = d['NAZDOD']
         self.stan_na = d['STAN_NA']
 
-        self.id = d['WOJ']+xstr(d['POW'])+xstr(d['GMI'])+xstr(d['RODZ'])
+        self.id = d['WOJ'] + xstr(d['POW']) + xstr(d['GMI']) + xstr(d['RODZ'])
         if self.typ() == 'WOJ':
             self.nazwa = self.nazwa.lower()
 
@@ -159,7 +159,7 @@ class Ulica(CommonInfo):
         # {'GMI': '03', 'RODZ_GMI': '2', 'NAZWA_1': 'Cicha', 'NAZWA_2': None,
         # 'POW': '03', 'STAN_NA': '2013-12-16', 'SYM': '0185962',
         # 'CECHA': 'ul.', 'WOJ': '08', 'SYM_UL': '02974'}
-        self.id = d['SYM']+d['SYM_UL']
+        self.id = d['SYM'] + d['SYM_UL']
         self.miejscowosc_id = d['SYM']
         self.symbol_ulicy = d['SYM_UL']
         self.cecha = d['CECHA']
@@ -169,6 +169,6 @@ class Ulica(CommonInfo):
 
     def __str__(self):
         if self.nazwa_2:
-            return '{s.cecha} {nazwa_2} {s.nazwa_1} '\
+            return '{s.cecha} {s.nazwa_2} {s.nazwa_1} '\
                 '({s.miejscowosc.nazwa})'.format(s=self)
         return '{s.cecha} {s.nazwa_1} ({s.miejscowosc.nazwa})'.format(s=self)
