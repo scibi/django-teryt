@@ -22,7 +22,7 @@ from .factories import (RodzajMiejscowosciFactory,
 
 
 class MixinTestObjectsManager(object):
-    def test_obects_model_manager(self):
+    def test_objects_model_manager(self):
         self.assertIsInstance(JednostkaAdministracyjna.objects, models.Manager)
 
 
