@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TEST_TYPES="unit integration"
-DJANGO_VERSIONS="16 17 18"
+DJANGO_VERSIONS="16 17 18 19"
 PYTHON_VERSIONS="py27 py34"
 DB_ENGINES="pgsql mysql sqlite"
 DB_URL_pgsql="postgres://postgres@/django_teryt"
@@ -16,7 +16,7 @@ for test_type in $TEST_TYPES; do
         db_url=${!db_url_name}
 
         echo -n "    - TOXENV=${python_version}-django-${django_version}-${test_type}"
-        echo -e "\tDBENGINE=${db_engine}\tDATABASE_URL=${db_url}"
+        echo -e "\tDATABASE_URL=${db_url}"
       done
     done
   done
