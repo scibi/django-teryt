@@ -5,30 +5,30 @@ language: python
 
 env:
   matrix:
-    - TOXENV=py27-django-16-unit	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py27-django-16-unit	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py27-django-17-unit	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py27-django-17-unit	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py27-django-18-unit	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py27-django-18-unit	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py34-django-16-unit	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py34-django-16-unit	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py34-django-17-unit	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py34-django-17-unit	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py34-django-18-unit	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py34-django-18-unit	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py27-django-16-integration	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py27-django-16-integration	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py27-django-17-integration	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py27-django-17-integration	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py27-django-18-integration	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py27-django-18-integration	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py34-django-16-integration	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py34-django-16-integration	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py34-django-17-integration	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py34-django-17-integration	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
-    - TOXENV=py34-django-18-integration	DBENGINE=pgsql	DATABASE_URL=postgres://postgres@/django_teryt
-    - TOXENV=py34-django-18-integration	DBENGINE=mysql	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py27-django-16-unit	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py27-django-16-unit	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py27-django-17-unit	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py27-django-17-unit	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py27-django-18-unit	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py27-django-18-unit	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py34-django-16-unit	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py34-django-16-unit	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py34-django-17-unit	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py34-django-17-unit	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py34-django-18-unit	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py34-django-18-unit	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py27-django-16-integration	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py27-django-16-integration	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py27-django-17-integration	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py27-django-17-integration	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py27-django-18-integration	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py27-django-18-integration	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py34-django-16-integration	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py34-django-16-integration	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py34-django-17-integration	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py34-django-17-integration	DATABASE_URL=mysql://root:@localhost/django_teryt
+    - TOXENV=py34-django-18-integration	DATABASE_URL=postgres://postgres@/django_teryt
+    - TOXENV=py34-django-18-integration	DATABASE_URL=mysql://root:@localhost/django_teryt
 
 install:
   - pip install tox coveralls codecov
@@ -36,9 +36,9 @@ install:
 before_script:
   - coverage erase
 # Needed for Django 1.6
-  - sh -c "if [ '$DBENGINE' = 'pgsql' ]; then psql  -c 'DROP DATABASE IF EXISTS django_teryt;' -U postgres; fi"
-  - sh -c "if [ '$DBENGINE' = 'pgsql' ]; then psql  -c 'CREATE DATABASE django_teryt;' -U postgres; fi"
-  - sh -c "if [ '$DBENGINE' = 'mysql' ]; then mysql -e 'CREATE DATABASE IF NOT EXISTS django_teryt;'; mysqladmin variables; mysql -e 'SET GLOBAL wait_timeout = 36000; SET GLOBAL max_allowed_packet = 33554432;'; mysqladmin variables; fi"
+  - bash -c "if [[ $DATABASE_URL = postgres* ]]; then psql  -c 'DROP DATABASE IF EXISTS django_teryt;' -U postgres; fi"
+  - bash -c "if [[ $DATABASE_URL = postgres* ]]; then psql  -c 'CREATE DATABASE django_teryt;' -U postgres; fi"
+  - bash -c "if [[ $DATABASE_URL = mysql* ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS django_teryt;'; mysqladmin variables; mysql -e 'SET GLOBAL wait_timeout = 36000; SET GLOBAL max_allowed_packet = 33554432;'; mysqladmin variables; fi"
 
 script: tox
 
