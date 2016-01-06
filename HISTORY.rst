@@ -16,3 +16,14 @@ History
 * Added common flag filed (aktywny)
 * Added 3 model managers to JednostkaAdministracyjna
 * Fixed PEP 8 compliance in main source files
+
+
+0.3.0 (2015-01-06)
+++++++++++++++++++
+
+* Added support for Django 1.8 and 1.9
+* Added support for SQLite and MySQL/MariaDB
+* Python 3.4 compatybility
+* Improved test coverage
+* This is last version to support Django 1.6 and South
+

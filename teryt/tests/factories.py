@@ -38,7 +38,8 @@ class JednostkaAdministracyjnaFactory(factory.django.DjangoModelFactory):
     id = factory.Sequence(lambda n: "{:07d}".format(n))
     nazwa = factory.Sequence(lambda n: "Gmina {}".format(n))
     nazwa_dod = 'gmina miejska'
-    typ = factory.LazyAttribute(lambda o: JednostkaAdministracyjna.LEN_TYPE[len(o.id)])
+    typ = factory.LazyAttribute(lambda o: JednostkaAdministracyjna.LEN_TYPE[
+        len(o.id)])
 
 
 class MiejscowoscFactory(factory.django.DjangoModelFactory):
