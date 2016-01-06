@@ -38,7 +38,7 @@ before_script:
 # Needed for Django 1.6
   - bash -c "if [[ $DATABASE_URL = postgres* ]]; then psql  -c 'DROP DATABASE IF EXISTS django_teryt;' -U postgres; fi"
   - bash -c "if [[ $DATABASE_URL = postgres* ]]; then psql  -c 'CREATE DATABASE django_teryt;' -U postgres; fi"
-  - bash -c "if [[ DATABASE_URL = mysql* ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS django_teryt;'; mysqladmin variables; mysql -e 'SET GLOBAL wait_timeout = 36000; SET GLOBAL max_allowed_packet = 33554432;'; mysqladmin variables; fi"
+  - bash -c "if [[ $DATABASE_URL = mysql* ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS django_teryt;'; mysqladmin variables; mysql -e 'SET GLOBAL wait_timeout = 36000; SET GLOBAL max_allowed_packet = 33554432;'; mysqladmin variables; fi"
 
 script: tox
 
