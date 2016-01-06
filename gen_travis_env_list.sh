@@ -15,8 +15,8 @@ for test_type in $TEST_TYPES; do
         db_url_name=DB_URL_${db_engine}
         db_url=${!db_url_name}
 
-        echo -n "    - TOXENV=${python_version}-django-${django_version}-${test_type}"
-        echo -e "\tDATABASE_URL=\"${db_url}\""
+        echo -n "    - \"TOXENV=${python_version}-django-${django_version}-${test_type}"
+        echo -e "        DATABASE_URL=${db_url}\""
       done
     done
   done
