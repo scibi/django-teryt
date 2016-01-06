@@ -15,7 +15,8 @@ class Migration(migrations.Migration):
             name='JednostkaAdministracyjna',
             fields=[
                 ('stan_na', models.DateField()),
-                ('id', models.CharField(max_length=7, serialize=False, primary_key=True)),
+                ('id', models.CharField(max_length=7, serialize=False,
+                                        primary_key=True)),
                 ('nazwa', models.CharField(max_length=50)),
                 ('nazwa_dod', models.CharField(max_length=50)),
             ],
@@ -28,10 +29,13 @@ class Migration(migrations.Migration):
             name='Miejscowosc',
             fields=[
                 ('stan_na', models.DateField()),
-                ('symbol', models.CharField(max_length=7, serialize=False, primary_key=True)),
+                ('symbol', models.CharField(max_length=7, serialize=False,
+                                            primary_key=True)),
                 ('nazwa', models.CharField(max_length=100)),
-                ('jednostka', models.ForeignKey(to='teryt.JednostkaAdministracyjna')),
-                ('miejscowosc_nadrzedna', models.ForeignKey(blank=True, to='teryt.Miejscowosc', null=True)),
+                ('jednostka', models.ForeignKey(
+                    to='teryt.JednostkaAdministracyjna')),
+                ('miejscowosc_nadrzedna', models.ForeignKey(
+                    blank=True, to='teryt.Miejscowosc', null=True)),
             ],
             options={
                 'abstract': False,
@@ -42,7 +46,8 @@ class Migration(migrations.Migration):
             name='RodzajMiejsowosci',
             fields=[
                 ('stan_na', models.DateField()),
-                ('id', models.CharField(max_length=2, serialize=False, primary_key=True)),
+                ('id', models.CharField(max_length=2, serialize=False,
+                                        primary_key=True)),
                 ('nazwa', models.CharField(max_length=30)),
             ],
             options={
@@ -54,11 +59,13 @@ class Migration(migrations.Migration):
             name='Ulica',
             fields=[
                 ('stan_na', models.DateField()),
-                ('id', models.CharField(max_length=12, serialize=False, primary_key=True)),
+                ('id', models.CharField(max_length=12, serialize=False,
+                                        primary_key=True)),
                 ('symbol_ulicy', models.CharField(max_length=10)),
                 ('cecha', models.CharField(max_length=10)),
                 ('nazwa_1', models.CharField(max_length=100)),
-                ('nazwa_2', models.CharField(max_length=100, null=True, blank=True)),
+                ('nazwa_2', models.CharField(max_length=100, null=True,
+                                             blank=True)),
                 ('miejscowosc', models.ForeignKey(to='teryt.Miejscowosc')),
             ],
             options={

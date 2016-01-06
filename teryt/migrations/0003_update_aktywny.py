@@ -14,9 +14,12 @@ def update_aktywny(apps, schema_editor):
         print("Updating: {}".format(model_name))
         model_class = apps.get_model("teryt", model_name)
 
-        akt_stan = model_class.objects.all().aggregate(models.Max('stan_na'))['stan_na__max']
-        model_class.objects.filter(stan_na__exact=akt_stan).update(aktywny=True)
-        model_class.objects.exclude(stan_na__exact=akt_stan).update(aktywny=False)
+        akt_stan = model_class.objects.all().aggregate(
+            models.Max('stan_na'))['stan_na__max']
+        model_class.objects.filter(stan_na__exact=akt_stan).update(
+            aktywny=True)
+        model_class.objects.exclude(stan_na__exact=akt_stan).update(
+            aktywny=False)
 
 
 class Migration(migrations.Migration):

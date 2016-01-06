@@ -3,12 +3,13 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import django.db.models.manager
+
 
 def update_type(apps, schema_editor):
     # Update typ attribute of JednostkaAdministracyjna
 
-    JednostkaAdministracyjna = apps.get_model("teryt", "JednostkaAdministracyjna")
+    JednostkaAdministracyjna = apps.get_model("teryt",
+                                              "JednostkaAdministracyjna")
     LEN_TYPE = {
         7: 'GMI',
         4: 'POW',
@@ -17,6 +18,7 @@ def update_type(apps, schema_editor):
     for ja in JednostkaAdministracyjna.objects.all():
         ja.typ = LEN_TYPE[len(ja.id)]
         ja.save()
+
 
 class Migration(migrations.Migration):
 

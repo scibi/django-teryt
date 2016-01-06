@@ -110,7 +110,6 @@ class JednostkaAdministracyjna(CommonInfo):
     nazwa = models.CharField(max_length=50)
     nazwa_dod = models.CharField(max_length=50)
     typ = models.CharField(max_length=3)
-    #typ = models.CharField(max_length=3, null=True, blank=True)
 
     wojewodztwa = WojewodztwoManager()
     powiaty = PowiatManager()
