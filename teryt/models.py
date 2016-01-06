@@ -83,19 +83,19 @@ class Miejscowosc(CommonInfo):
 class WojewodztwoManager(models.Manager):
     def get_queryset(self):
         return super(WojewodztwoManager,
-                     self).get_queryset().extra(where=["char_length(id) = 2"])
+                     self).get_queryset().filter(typ__exact='WOJ')
 
 
 class PowiatManager(models.Manager):
     def get_queryset(self):
         return super(PowiatManager,
-                     self).get_queryset().extra(where=["char_length(id) = 4"])
+                     self).get_queryset().filter(typ__exact='POW')
 
 
 class GminaManager(models.Manager):
     def get_queryset(self):
         return super(GminaManager,
-                     self).get_queryset().extra(where=["char_length(id) = 7"])
+                     self).get_queryset().filter(typ__exact='GMI')
 
 
 @python_2_unicode_compatible
@@ -109,9 +109,8 @@ class JednostkaAdministracyjna(CommonInfo):
     id = models.CharField(max_length=7, primary_key=True)
     nazwa = models.CharField(max_length=50)
     nazwa_dod = models.CharField(max_length=50)
-
-    def typ(self):
-        return self.LEN_TYPE[len(self.id)]
+    typ = models.CharField(max_length=3)
+    #typ = models.CharField(max_length=3, null=True, blank=True)
 
     wojewodztwa = WojewodztwoManager()
     powiaty = PowiatManager()
@@ -138,7 +137,9 @@ class JednostkaAdministracyjna(CommonInfo):
         self.stan_na = d['STAN_NA']
 
         self.id = d['WOJ'] + xstr(d['POW']) + xstr(d['GMI']) + xstr(d['RODZ'])
-        if self.typ() == 'WOJ':
+
+        self.typ = self.LEN_TYPE[len(self.id)]
+        if self.typ == 'WOJ':
             self.nazwa = self.nazwa.lower()
 
     def __str__(self):

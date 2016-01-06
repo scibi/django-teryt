@@ -114,11 +114,13 @@ class TestJednostkaAdministracyjna(TestCase, MixinTestObjectsManager):
         self.assertEqual(gmina.id, '0201011')
         self.assertEqual(gmina.nazwa, 'Bolesławiec')
         self.assertEqual(gmina.nazwa_dod, 'gmina miejska')
+        self.assertEqual(gmina.typ, 'GMI')
 
         # JednostkaAdministracyjna - województwo
         self.assertEqual(wojewodztwo.id, '02')
         self.assertEqual(wojewodztwo.nazwa, 'dolnośląskie')
         self.assertEqual(wojewodztwo.nazwa_dod, 'województwo')
+        self.assertEqual(wojewodztwo.typ, 'WOJ')
 
     def test_parents(self):
 
