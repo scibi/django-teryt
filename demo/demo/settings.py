@@ -36,9 +36,15 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'south',
-    'teryt'
 )
+
+try:
+    import south
+    INSTALLED_APPS = INSTALLED_APPS + ('south', )
+except ImportError:
+    pass
+
+INSTALLED_APPS = INSTALLED_APPS + ('teryt', )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
