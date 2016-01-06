@@ -27,7 +27,7 @@ clean-pyc:
 
 
 lint:
-	flake8 --exclude=migrations,south_migrations teryt
+	flake8 --exclude=south_migrations teryt
 
 test:
 	python runtests.py

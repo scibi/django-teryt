@@ -23,7 +23,7 @@ History
 
 * Added support for Django 1.8 and 1.9
 * Added support for SQLite and MySQL/MariaDB
-* Python 3.4 compatybility
+* Python 3.4 compatibility
 * Improved test coverage
 * This is last version to support Django 1.6 and South
 
