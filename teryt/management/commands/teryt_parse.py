@@ -1,19 +1,23 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction, DatabaseError, IntegrityError
+"""
+./manage.py teryt_parse [xml/zip files] [--update]
+------------
+
+Command will parse xml/zip and upload it into teryt database.
+Option --update must be used if files have records
+already existing in database
+"""
+
 from optparse import make_option
+import zipfile
 
+from django.core.management.base import BaseCommand, CommandError
 
-from teryt.models import (
-    RodzajMiejscowosci, JednostkaAdministracyjna, Miejscowosc, Ulica
-)
-from teryt.utils import parse
-
-import os.path
+from teryt.utils_zip import update_database
 
 
 class Command(BaseCommand):
-    args = '[xml file list]'
-    help = 'Import TERYT data from XML files prepared by GUS'
+    args = '[xml/zip file list]'
+    help = 'Import TERYT data from XML/ZIP files prepared by GUS'
     option_list = BaseCommand.option_list + (
         make_option('--update',
                     action='store_true',
@@ -25,44 +29,19 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         force_ins = not options['update']
 
-        fn_dict = {
-            'WMRODZ.xml': RodzajMiejscowosci,
-            'TERC.xml': JednostkaAdministracyjna,
-            'SIMC.xml': Miejscowosc,
-            'ULIC.xml': Ulica,
-        }
-
         if not args:
             raise CommandError('At least 1 file name required')
 
-        for a in args:
-            try:
-                c = fn_dict[os.path.basename(a)]
-            except KeyError as e:
-                raise CommandError('Unknown filename: {}'.format(e))
+        for data_file in args:
+            self.stdout.write('Working on {}'.format(data_file))
+            if zipfile.is_zipfile(data_file):
+                zfile = zipfile.ZipFile(data_file)
+                fname = zfile.namelist()[0]
+                with zfile.open(fname) as xml_file:
+                    update_database(xml_file, fname, force_ins)
+            else:
+                with open(data_file) as xml_file:
+                    update_database(xml_file, data_file, force_ins)
+            self.stdout.write('File {} uploaded'.format(data_file))
 
-            try:
-                with transaction.atomic():
-                    c.objects.all().update(aktywny=False)
-
-                    row_list = parse(a)
-
-                    # MySQL doesn't support deferred checking of foreign key
-                    # constraints. As a workaround we sort data placing rows
-                    # with no a parent row at the begining.
-                    if c is Miejscowosc:
-                        row_list = sorted(row_list, key=lambda x: '0000000'
-                                          if x['SYM'] == x['SYMPOD']
-                                          else x['SYM'])
-
-                    for vals in row_list:
-                        t = c()
-                        t.set_val(vals)
-                        t.aktywny = True
-                        t.save(force_insert=force_ins)
-            except IntegrityError as e:
-                raise CommandError("Database integrity error: {}".format(e))
-            except DatabaseError as e:
-                raise CommandError("General database error: {}\n"
-                                   "Make sure you run syncdb or migrate before"
-                                   "importing data!".format(e))
+        self.stdout.write("Done.")
