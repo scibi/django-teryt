@@ -1,6 +1,5 @@
-django>=1.5.1
-
-# Only if you are using Django<1.7
-#South>=1.0
+django>=1.7
+requests>=2.21.0
 
 # Additional requirements go here
+beautifulsoup4==4.4.1
