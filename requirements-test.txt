@@ -5,7 +5,7 @@ fake-factory==0.5.2
 
 flake8==2.3.0
 coverage==3.7.1
-requests==2.7.0
+requests==2.20.0
 requests-mock==1.0.0
 beautifulsoup4==4.4.1
 
